@@ -80,7 +80,7 @@ struct SignUp: View {
                     // Disclaimer text
                     VStack(alignment: .leading) {
                         HStack {
-                            Text("By Continuing you agree to the [user agreement and the company's privacy policy](https://www.cloudingenuity.com/cloud-ingenuity-privacy-page).")
+                            Text("By Continuing you agree to the [User agreement and the company's privacy policy](https://www.cloudingenuity.com/cloud-ingenuity-privacy-page).")
                             Spacer()
                         }.font(.system(size: 16, weight: .light))
 //                            .border(Color.blue, width: 2.0)
@@ -91,7 +91,11 @@ struct SignUp: View {
             
         }
         .clipped()
-        .background(RoundedRectangle(cornerRadius: 24).fill(.secondary))
+        .background(RoundedRectangle(cornerRadius: 24).fill(Color("WindowBackground")))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24)
+                .stroke(Color("BorderColor"), lineWidth: 2.0)
+        )
     }
 }
 
@@ -132,7 +136,7 @@ struct Login: View {
 
 struct MyButton: View {
     @EnvironmentObject var myClass: MyClass
-    @State var color: Color = .white
+    @State var color: Color
     @State var textAnimate: String = ""
     @State var textButton: String = ""
     @State var myActions: MyActions = .none
