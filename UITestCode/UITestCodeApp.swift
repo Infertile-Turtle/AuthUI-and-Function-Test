@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct UITestCodeApp: App {
+    @StateObject var myClass = MyClass()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView().preferredColorScheme(.dark)
+                .environmentObject(myClass)
         }
     }
 }
