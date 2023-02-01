@@ -13,38 +13,43 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             Color("IPadBackground")
-            if myClass.myCase == .none {
+            switch myClass.myCase {
+            case .none:
                 SignUp()
                     .aspectRatio((3.00/2.00), contentMode: .fit)
                     .padding(100)
-            } else if myClass.myCase == .isLoggedIn {
+            case .isLoggedIn:
                 Login()
                     .aspectRatio((3.00/2.00), contentMode: .fit)
                     .padding(100)
-            } else if myClass.myCase == .isRegister {
+            case .isRegister:
                 Register()
                     .aspectRatio((3.00/2.00), contentMode: .fit)
                     .padding(100)
-            } else if myClass.myCase == .isVerify {
+            case .isVerify:
                 Verify()
-//                .aspectRatio((3.00/2.00), contentMode: .fit)
-//                .padding(100)
-            } else if myClass.myCase == .isVerifyApproval {
+                    .aspectRatio((3.00/2.00), contentMode: .fit)
+                    .padding(100)
+            case .isVerifyApproval:
                 VerifyApproval()
-//                .aspectRatio((3.00/2.00), contentMode: .fit)
-//                .padding(100)
-            } else if myClass.myCase == .isMFA {
+                    .aspectRatio((3.00/2.00), contentMode: .fit)
+                    .padding(100)
+            case .isMFA:
                 MFA()
-//                .aspectRatio((3.00/2.00), contentMode: .fit)
-//                .padding(100)
-            } else if myClass.myCase == .isMFAApproval {
+                    .aspectRatio((3.00/2.00), contentMode: .fit)
+                    .padding(100)
+            case .isMFAApproval:
                 MFAApproval()
-//                .aspectRatio((3.00/2.00), contentMode: .fit)
-//                .padding(100)
-            } else if myClass.myCase == .isFaceId {
+                    .aspectRatio((3.00/2.00), contentMode: .fit)
+                    .padding(100)
+            case .isFaceId:
                 FaceID()
-//                .aspectRatio((3.00/2.00), contentMode: .fit)
-//                .padding(100)
+                    .aspectRatio((3.00/2.00), contentMode: .fit)
+                    .padding(100)
+            case .isSignup:
+                SignUp()
+                    .aspectRatio((3.00/2.00), contentMode: .fit)
+                    .padding(100)
             }
         }
         .ignoresSafeArea(.all)
@@ -163,7 +168,7 @@ struct Login: View {
                         }
                         VStack {
                             HStack {
-                                MyButton(color: Color("ButtonPurple"), textButton: "Log In", myActions: .register)
+                                MyButton(color: Color("ButtonPurple"), textButton: "Log In", myActions: .MFA)
                                 
                                 
                                 MyCircle(myActions: .faceid)
@@ -217,19 +222,289 @@ struct Register: View {
                     VStack {
                         Spacer()
                         HStack {
-                            Text("Welcome to FormPlan!")
+                            Text("Register and Verification")
+                                .font(.system(size: 50, weight: .bold))
+                                .scaledToFill()
+                                .minimumScaleFactor(0.01)
+                        }
+                        .padding([.bottom], 50)
+                        VStack(alignment: .center) {
+                            MyTextField(myActions: .none, fieldName: "Username", fieldValue: $myClass.username)
+                            MyTextField(myActions: .none, fieldName: "Email", fieldValue: $myClass.email)
+                            MyTextField(myActions: .none, fieldName: "Phone Number", fieldValue: $myClass.phoneNumber)
+                            MyTextField(myActions: .none, fieldName: "Password", fieldValue: $myClass.password)
+                        }
+                        VStack {
+                            HStack {
+                                Spacer()
+                                //TODO: 🟢 Add Forgot Password Workflow in place of below
+                                Button(action:{
+                                    myClass.myCase = .none
+                                }){
+                                    Text("Forgot Password")
+                                }
+                            }
+                        }
+                        VStack {
+                            HStack {
+                                MyButton(color: Color("ButtonPurple"), textButton: "Send Verification Code to Email", myActions: .verify)
+                            }
+                        }
+                        .padding([.top], 50)
+                    }
+                    .padding([.horizontal], 150)
+                    .padding([.top], 50)
+                    .padding([.bottom], 50)
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text("By Continuing you agree to the [User agreement and the company's privacy policy](https://www.cloudingenuity.com/cloud-ingenuity-privacy-page).")
+                            Spacer()
+                        }.font(.system(size: 16, weight: .light))
+                    }
+                    .padding()
+                }
+            }
+        }
+        .background(RoundedRectangle(cornerRadius: 24).fill(Color("WindowBackground")))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24)
+                .stroke(Color("BorderColor"), lineWidth: 2.0)
+        )
+        }
+    }
+
+//MARK: Verify
+
+struct Verify: View {
+    @EnvironmentObject var myClass: MyClass
+    @Environment(\.colorScheme) var colorScheme
+    
+    //TODO: 🟢 Put Amplify workflow here
+    
+    var body: some View {
+        
+        VStack {
+            ZStack {
+                HStack {
+                    VStack {
+                        Image("Icon")
+                            .colorMultiply(colorScheme == .dark ? .white : .black)
+                        Spacer()
+                    }
+                    .padding()
+                    Spacer()
+                }
+                VStack {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Text("Enter Verification Code")
+                                .font(.system(size: 50, weight: .bold))
+                                .scaledToFill()
+                                .minimumScaleFactor(0.01)
+                        }
+                        .padding([.bottom], 50)
+                        VStack(alignment: .center) {
+                            MyTextField(myActions: .none, fieldName: "Username", fieldValue: $myClass.username)
+                            MyTextField(myActions: .none, fieldName: "Verification Code", fieldValue: $myClass.verification)
+                        }
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Button(action:{
+                                    //TODO: 🟢 Put Amplify workflow here
+                                    myClass.myCase = .none
+                                }){
+                                    Text("Resend Verification Code")
+                                }
+                            }
+                        }
+                        VStack {
+                            HStack {
+                                MyButton(color: Color("ButtonPurple"), textButton: "Enter Code", myActions: .verifyapproved)
+                            }
+                        }
+                        .padding([.top], 50)
+                    }
+                    .padding([.horizontal], 150)
+                    .padding([.top], 50)
+                    .padding([.bottom], 50)
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text("By Continuing you agree to the [User agreement and the company's privacy policy](https://www.cloudingenuity.com/cloud-ingenuity-privacy-page).")
+                            Spacer()
+                        }.font(.system(size: 16, weight: .light))
+                    }
+                    .padding()
+                }
+            }
+        }
+        .background(RoundedRectangle(cornerRadius: 24).fill(Color("WindowBackground")))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24)
+                .stroke(Color("BorderColor"), lineWidth: 2.0)
+        )
+        }
+    }
+
+//MARK: VerifyApproval
+
+struct VerifyApproval: View {
+    @EnvironmentObject var myClass: MyClass
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        
+        VStack {
+            ZStack {
+                HStack {
+                    VStack {
+                        Image("Icon")
+                            .colorMultiply(colorScheme == .dark ? .white : .black)
+                        Spacer()
+                    }
+                    .padding()
+                    Spacer()
+                }
+                VStack {
+                    VStack {
+                        Spacer(minLength: 250)
+                        HStack {
+                            Text("Your Verification code was Accepted!")
+                                .font(.system(size: 60, weight: .bold))
+                                .scaledToFill()
+                                .minimumScaleFactor(0.01)
+                        }
+                        .padding([.bottom], 50)
+                        VStack {
+                            Image("CheckMark")
+                                .colorMultiply(Color("CheckMarkColor"))
+                        }
+                    }
+                    Spacer()
+                    .padding([.horizontal], 150)
+                    .padding([.bottom], 50)
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text("By Continuing you agree to the [User agreement and the company's privacy policy](https://www.cloudingenuity.com/cloud-ingenuity-privacy-page).")
+                            Spacer()
+                        }.font(.system(size: 16, weight: .light))
+                    }
+                    .padding()
+                }
+            }
+        }
+        .background(RoundedRectangle(cornerRadius: 24).fill(Color("WindowBackground")))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24)
+                .stroke(Color("BorderColor"), lineWidth: 2.0)
+        )
+        }
+    }
+
+//MARK: MFA
+
+struct MFA: View {
+    @EnvironmentObject var myClass: MyClass
+    @Environment(\.colorScheme) var colorScheme
+    
+    //TODO: 🟢 Put Amplify workflow here
+    
+    var body: some View {
+        
+        VStack {
+            ZStack {
+                HStack {
+                    VStack {
+                        Image("Icon")
+                            .colorMultiply(colorScheme == .dark ? .white : .black)
+                        Spacer()
+                    }
+                    .padding()
+                    Spacer()
+                }
+                VStack {
+                    VStack {
+                        Spacer()
+                        VStack {
+                            Text("Please Enter Multi-Factor")
+                            Text("Authentication Code")
+                        }
+                                .font(.system(size: 50, weight: .bold))
+                                .minimumScaleFactor(0.01)
+                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
+                        .padding([.bottom], 50)
+                        VStack {
+                            MyTextField(myActions: .none, fieldName: "MFA Code", fieldValue: $myClass.mfa)
+                        }
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Button(action:{
+                                    //TODO: 🟢 Put Amplify workflow here
+                                    myClass.myCase = .none
+                                }){
+                                    Text("Resend MFA Code")
+                                }
+                            }
+                        }
+                        VStack {
+                            HStack {
+                                MyButton(color: Color("ButtonPurple"), textButton: "Submit", myActions: .verifyapproved)
+                            }
+                        }
+                        .padding([.top], 50)
+                    }
+                    .padding([.horizontal], 150)
+                    .padding([.top], 50)
+                    .padding([.bottom], 50)
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Text("By Continuing you agree to the [User agreement and the company's privacy policy](https://www.cloudingenuity.com/cloud-ingenuity-privacy-page).")
+                            Spacer()
+                        }.font(.system(size: 16, weight: .light))
+                    }
+                    .padding()
+                }
+            }
+        }
+        .background(RoundedRectangle(cornerRadius: 24).fill(Color("WindowBackground")))
+        .overlay(
+            RoundedRectangle(cornerRadius: 24)
+                .stroke(Color("BorderColor"), lineWidth: 2.0)
+        )
+        }
+    }
+
+//MARK: MFAApproval
+
+struct MFAApproval: View {
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        VStack {
+            ZStack {
+                HStack {
+                    VStack {
+                        Image("Icon")
+                            .colorMultiply(colorScheme == .dark ? .white : .black)
+                        Spacer()
+                    }
+                    .padding()
+                    Spacer()
+                }
+                VStack {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Text("Your Code was Accepted!")
                                 .font(.system(size: 50, weight: .bold))
                                 .scaledToFill()
                                 .minimumScaleFactor(0.01)
                         }
                         VStack {
-                            //TODO: 🟢 Put Text Fields Here
-                            MyButton(color: Color("ButtonGreen"), textAnimate: "Insert Animation Here", myActions: .none)
+                            MyButton(color: Color("ButtonGreen"), textAnimate: "Insert Animation Here", myActions: .MFAapproval)
                             Spacer()
-                        }
-                        
-                        VStack {
-                            MyButton(color: Color("ButtonPurple"), textButton: "Send Verification Code to Email", myActions: .register)
                         }
                         .padding([.top], 50)
                     }
@@ -242,6 +517,7 @@ struct Register: View {
                         }.font(.system(size: 16, weight: .light))
                     }
                     .padding()
+                    .foregroundColor(Color(.white))
                 }
             }
         }
@@ -251,72 +527,12 @@ struct Register: View {
             RoundedRectangle(cornerRadius: 24)
                 .stroke(Color("BorderColor"), lineWidth: 2.0)
         )
-        VStack(alignment: .center) {
-            MyTextField(fieldName: "Username", fieldValue: $myClass.username)
-            Button(action:{
-                myClass.myCase = .none
-            }){
-                Text("Reset")
-            }
-        }
-    }
-}
-
-//MARK: Verify
-
-struct Verify {
-    @EnvironmentObject var myClass: MyClass
-    var body: some View {
-        Button(action:{
-            myClass.myCase = .none
-        }){
-            Text("Reset")
-        }
-    }
-}
-
-//MARK: VerifyApproval
-
-struct VerifyApproval {
-    @EnvironmentObject var myClass: MyClass
-    var body: some View {
-        Button(action:{
-            myClass.myCase = .none
-        }){
-            Text("Reset")
-        }
-    }
-}
-
-//MARK: MFA
-
-struct MFA {
-    @EnvironmentObject var myClass: MyClass
-    var body: some View {
-        Button(action:{
-            myClass.myCase = .none
-        }){
-            Text("Reset")
-        }
-    }
-}
-
-//MARK: MFAApproval
-
-struct MFAApproval {
-    @EnvironmentObject var myClass: MyClass
-    var body: some View {
-        Button(action:{
-            myClass.myCase = .none
-        }){
-            Text("Reset")
-        }
     }
 }
 
 //MARK: FaceID
 
-struct FaceID {
+struct FaceID: View {
     @EnvironmentObject var myClass: MyClass
     var body: some View {
         Button(action:{
@@ -347,7 +563,15 @@ struct MyButton: View {
             Text(textButton).foregroundColor(.white)
                 .font(.system(size: 24, weight: .bold))
         }
-        .frame(maxWidth: .infinity, maxHeight: (myActions == .none) ? 250 : 100)
+        .frame(maxWidth: .infinity, maxHeight: {
+            if myActions == .none {
+                return 250
+            } else if myActions == .MFAapproval {
+                return 400
+            } else {
+                return 100
+            }
+        }())
 //        .padding()
         .background(
             RoundedRectangle(cornerRadius: 8)
@@ -484,6 +708,8 @@ class MyClass: ObservableObject {
     @Published var email: String = ""
     @Published var phoneNumber: String = ""
     @Published var password: String = ""
+    @Published var verification: String = ""
+    @Published var mfa: String = ""
 }
 
 public enum MyCases {
