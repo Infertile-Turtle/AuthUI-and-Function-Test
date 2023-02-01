@@ -2,11 +2,11 @@
 //  ContentView.swift
 //  UITestCode
 //
-//  Created by Matthew Nos on 1/25/23.
+//  Created by Andrew Fairchild on 1/25/23.
 //
 
 import SwiftUI
-import CoreGraphics
+//import CoreGraphics
 
 struct ContentView: View {
     @EnvironmentObject var myClass: MyClass
@@ -190,7 +190,6 @@ struct Login: View {
                 }
             }
         }
-//        .clipped()
         .background(RoundedRectangle(cornerRadius: 24).fill(Color("WindowBackground")))
         .overlay(
             RoundedRectangle(cornerRadius: 24)
@@ -572,7 +571,6 @@ struct MyButton: View {
                 return 100
             }
         }())
-//        .padding()
         .background(
             RoundedRectangle(cornerRadius: 8)
                 .fill(color)
@@ -691,8 +689,6 @@ struct MyTextField: View {
                             .stroke(Color("BorderColor"), lineWidth: 2.0)
                     )
             )
-            
-            
     }
 }
 
@@ -702,7 +698,6 @@ struct MyTextField: View {
 
 class MyClass: ObservableObject {
     @Published var myCase: MyCases = .none
-//    @Published var myActions: MyActions = .none
     @Published var userInfo: UserInfo = .none
     @Published var username: String = ""
     @Published var email: String = ""
