@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import LocalAuthentication
 //import CoreGraphics
 
 struct ContentView: View {
@@ -50,6 +51,10 @@ struct ContentView: View {
                 SignUp()
                     .aspectRatio((3.00/2.00), contentMode: .fit)
                     .padding(100)
+            case .onApp:
+                OnApp()
+                    .aspectRatio((3.00/2.00), contentMode: .fit)
+                    .padding(100)
             }
         }
         .ignoresSafeArea(.all)
@@ -63,6 +68,61 @@ struct ContentView_Previews: PreviewProvider {
             .environmentObject(myClass)
     }
 }
+
+//MARK: On App Screen
+
+struct OnApp: View {
+        @EnvironmentObject var myClass: MyClass
+        @Environment(\.colorScheme) var colorScheme
+        
+        var body: some View {
+            
+            VStack {
+                ZStack {
+                    HStack {
+                        VStack {
+                            Image("Icon")
+                                .colorMultiply(colorScheme == .dark ? .white : .black)
+                            Spacer()
+                        }
+                        .padding()
+                        Spacer()
+                    }
+                    VStack {
+                        VStack {
+                            Spacer(minLength: 250)
+                            HStack {
+                                Text("You made it to the APP!!!")
+                                    .font(.system(size: 60, weight: .bold))
+                                    .scaledToFill()
+                                    .minimumScaleFactor(0.01)
+                            }
+                            .padding([.bottom], 50)
+                        }
+                        Spacer()
+                        .padding([.horizontal], 150)
+                        .padding([.bottom], 50)
+                        VStack(alignment: .leading) {
+                            HStack {
+                                Button(action:{
+                                    myClass.myCase = .none
+                                }){
+                                    Text("Forgot Password")
+                                }
+                                Spacer()
+                            }.font(.system(size: 16, weight: .light))
+                        }
+                        .padding()
+                    }
+                }
+            }
+            .background(RoundedRectangle(cornerRadius: 24).fill(Color("WindowBackground")))
+            .overlay(
+                RoundedRectangle(cornerRadius: 24)
+                    .stroke(Color("BorderColor"), lineWidth: 2.0)
+            )
+            }
+        }
 
 //MARK: Sign Up View
 
@@ -658,13 +718,42 @@ struct MyCircle: View {
                     myClass.myCase = .isMFAApproval
                     print("MFA Approval Action")
                 case .faceid:
-                    myClass.myCase = .isFaceId
+                    authenticate()
                     print("👻 FaceID Action")
                 case .none:
                     myClass.myCase = .none
                     print("🛑 No Action")
                 }
             }
+    }
+    
+    
+   func authenticate() {
+        let context = LAContext()
+        var error: NSError?
+
+        // check whether biometric authentication is possible
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            // it's possible, so go ahead and use it
+            let reason = "We need to unlock your data."
+
+            context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, authenticationError in
+                // authentication has now completed
+                if success {
+                    // authenticated successfully
+                    DispatchQueue.main.async {
+                        myClass.myCase = .onApp
+                    }
+                    print("Authentication Successful!")
+                } else {
+                    // there was a problem
+                    print("There was an error: \(String(describing: error))")
+                }
+            }
+        } else {
+            // no biometrics
+            print("No Biometrics.")
+        }
     }
 }
 
@@ -698,7 +787,6 @@ struct MyTextField: View {
 
 class MyClass: ObservableObject {
     @Published var myCase: MyCases = .none
-    @Published var userInfo: UserInfo = .none
     @Published var username: String = ""
     @Published var email: String = ""
     @Published var phoneNumber: String = ""
@@ -716,6 +804,7 @@ public enum MyCases {
     case isMFA
     case isMFAApproval
     case isFaceId
+    case onApp
     case none
 }
 
@@ -731,10 +820,3 @@ public enum MyActions {
     case none
 }
 
-public enum UserInfo: String {
-    case username
-    case email
-    case phoneNumber
-    case password
-    case none
-}
