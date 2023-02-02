@@ -11,6 +11,7 @@ import LocalAuthentication
 
 struct ContentView: View {
     @EnvironmentObject var myClass: MyClass
+    @State private var showTransition = true
     var body: some View {
         ZStack {
             Color("IPadBackground")
@@ -32,17 +33,53 @@ struct ContentView: View {
                     .aspectRatio((3.00/2.00), contentMode: .fit)
                     .padding(100)
             case .isVerifyApproval:
+                if showTransition {
                 VerifyApproval()
-                    .aspectRatio((3.00/2.00), contentMode: .fit)
-                    .padding(100)
+                        .aspectRatio((3.00/2.00), contentMode: .fit)
+                        .padding(100)
+                    .transition(.slide)
+                    .animation(.easeInOut(duration: 5), value: 5)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            self.showTransition = false
+                            print(showTransition)
+                        }
+                    }
+                    
+                } else {
+                    Login()
+                        .aspectRatio((3.00/2.00), contentMode: .fit)
+                        .padding(100)
+                        .onDisappear() {
+                    self.showTransition = true
+                print(showTransition)
+            }
+                        }
             case .isMFA:
                 MFA()
                     .aspectRatio((3.00/2.00), contentMode: .fit)
                     .padding(100)
             case .isMFAApproval:
+                if showTransition {
                 MFAApproval()
-                    .aspectRatio((3.00/2.00), contentMode: .fit)
-                    .padding(100)
+                        .aspectRatio((3.00/2.00), contentMode: .fit)
+                        .padding(100)
+                    .transition(.slide)
+                    .animation(.easeInOut(duration: 5), value: 5)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            self.showTransition = false
+                        }
+                    }
+                } else {
+                    OnApp()
+                        .aspectRatio((3.00/2.00), contentMode: .fit)
+                        .padding(100)
+                        .onDisappear() {
+                    self.showTransition = true
+                print(showTransition)
+            }
+                }
             case .isFaceId:
                 FaceID()
                     .aspectRatio((3.00/2.00), contentMode: .fit)
@@ -509,7 +546,7 @@ struct MFA: View {
                         }
                         VStack {
                             HStack {
-                                MyButton(color: Color("ButtonPurple"), textButton: "Submit", myActions: .verifyapproved)
+                                MyButton(color: Color("ButtonPurple"), textButton: "Submit", myActions: .MFAapproval)
                             }
                         }
                         .padding([.top], 50)
@@ -562,7 +599,7 @@ struct MFAApproval: View {
                                 .minimumScaleFactor(0.01)
                         }
                         VStack {
-                            MyButton(color: Color("ButtonGreen"), textAnimate: "Insert Animation Here", myActions: .MFAapproval)
+                            MyButton(color: Color("ButtonGreen"), textAnimate: "Insert Animation Here", myActions: .largeField)
                             Spacer()
                         }
                         .padding([.top], 50)
@@ -625,7 +662,7 @@ struct MyButton: View {
         .frame(maxWidth: .infinity, maxHeight: {
             if myActions == .none {
                 return 250
-            } else if myActions == .MFAapproval {
+            } else if myActions == .largeField {
                 return 400
             } else {
                 return 100
@@ -641,6 +678,8 @@ struct MyButton: View {
         )
         .onTapGesture {
             switch myActions {
+            case .largeField:
+                print("Large Field")
             case .signup:
                 myClass.myCase = .isSignup
                 print("Signup Action")
@@ -696,6 +735,8 @@ struct MyCircle: View {
             )
             .onTapGesture {
                 switch myActions {
+                case .largeField:
+                    print("Large Field")
                 case .signup:
                     myClass.myCase = .isSignup
                     print("Signup Action")
@@ -809,6 +850,7 @@ public enum MyCases {
 }
 
 public enum MyActions {
+    case largeField
     case signup
     case register
     case verify
